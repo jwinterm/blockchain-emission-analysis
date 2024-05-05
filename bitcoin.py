@@ -7,13 +7,13 @@ class Bitcoin(blockchain.Blockchain):
         # First generate fully calculated date and reward data
         self.blocks = np.arange(0, self.number_of_blocks, self.block_skip)
         self.launch_time = 1231006505
-        self.time = self.blocks*600*self.block_skip + self.launch_time
+        self.time = self.blocks*600 + self.launch_time
         self.date = np.array(self.time, dtype='datetime64[s]')
         self.reward = np.zeros(len(self.blocks))
         self.cum_reward = np.zeros(len(self.blocks))
         for i in range(len(self.blocks)):
             self.reward[i] = ((np.uint(50e8)//2**((i*self.block_skip)//210000))*1e-8) * self.block_skip
-            self.cum_reward[i] += self.reward[i]
+            self.cum_reward[i] = self.cum_reward[i-1] + self.reward[i] if i > 0 else self.reward[i]
 
         # Historical data for bitcoin emission
         self.date_historical = [np.datetime64('2009-01-03'), np.datetime64('2012-11-28'), np.datetime64('2016-07-09'), np.datetime64('2024-04-20')]
@@ -26,5 +26,3 @@ class Bitcoin(blockchain.Blockchain):
             self.reward_historical[i] = 210000*(np.uint(50e8)//2**i)*1e-8
             if i < len(self.date_historical)-1:
                 self.cum_reward_historical[i+1] = self.cum_reward_historical[i] + self.reward_historical[i]
-            print(i, self.date_historical[i], self.reward_historical[i], self.cum_reward_historical[i])
-        print(self.date_historical, self.cum_reward_historical)
