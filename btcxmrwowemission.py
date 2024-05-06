@@ -1,33 +1,50 @@
+# Importing the required libraries
 import matplotlib.pyplot as plt
 import numpy as np
-import datetime as dt
 
-# Importing the classes
+# Importing our classes
 import bitcoin
 import monero
 import wownero
-# Instance classes with specified number of blocks and block skip
-btc = bitcoin.Bitcoin(7e6, 10)
-xmr = monero.Monero(40e6, 100)
-wow = wownero.Wownero(15e6, 100)
+import grin
 
-# Adjusting the date to start at the same time
-btc.time = (btc.time - btc.time[0])/60/60/24/365
-xmr.time = (xmr.time - xmr.time[0])/60/60/24/365
-wow.time = (wow.time - wow.time[0])/60/60/24/365
-# Normalizing the data by the total number of coins (or 18.132e6 for Monero)
-btc.cum_reward = btc.cum_reward / btc.cum_reward[-1]
-xmr.cum_reward = xmr.cum_reward / 18.132e6
-wow.cum_reward = wow.cum_reward / wow.cum_reward[-1]
 
-# Plotting the data
-plt.plot(btc.time, btc.cum_reward, '-', color='orange', label='Bitcoin')
-plt.plot(xmr.time, xmr.cum_reward, '--', color='grey', label='Monero')
-plt.plot(wow.time, wow.cum_reward, '-.', color='pink', label='Wownero')
+# Instance classes with default blocks and block skip etc
+btc = bitcoin.Bitcoin(number_of_blocks=6.4e6, block_skip=1000, block_time=600, launch_time=1231006505)
+xmr = monero.Monero(number_of_blocks=2e7, block_skip=1000, block_time=120, launch_time=1397793600)
+wow = wownero.Wownero(number_of_blocks=1e7, block_skip=1000, block_time=300, launch_time=1521598527)
+grin = grin.Grin(number_of_blocks=6e7, block_skip=10000, block_time=60, launch_time=1547576904)
+
+
+# Plotting the rewards data normalized to final supply or pre-tail emission for xmr or 100 years for grin
+plt.plot(btc.time/(365.25*86400), btc.cum_reward/btc.cum_reward[-1], '-', color='orange', label='Bitcoin')
+plt.plot(xmr.time/(365.25*86400), xmr.cum_reward/18.13e6, '--', color='grey', label='Monero')
+plt.plot(wow.time/(365.25*86400), wow.cum_reward/wow.cum_reward[-1], '-.', color='pink', label='Wownero')
+plt.plot(grin.time/(365.25*86400), grin.cum_reward/(100*365.25*86400), ':', color='black', label='Grin')
 
 # Adding labels, grid, legend, etc
 plt.xlabel('Time since launch (years)')
-plt.ylabel('Total coins emitted (pre-tail emission)')
+plt.ylabel('Total supply (coins)')
+plt.grid()
+plt.legend()
+
+# Displaying the plot
+plt.show()
+
+
+# Plotting the inflation data
+print("Getting BTC inflation rate and plotting")
+plt.semilogy(btc.time/(86400*365.25), btc.get_inflation_rate() , '-', color='orange', label='Bitcoin')
+print("Getting XMR inflation rate and plotting")
+plt.semilogy(xmr.time/(86400*365.25), xmr.get_inflation_rate() , '--', color='grey', label='Monero')
+print("Getting WOW inflation rate and plotting")
+plt.semilogy(wow.time/(86400*365.25), wow.get_inflation_rate() , '-.', color='pink', label='Wownero')
+print("Getting GRIN inflation rate and plotting")
+plt.semilogy(grin.time/(86400*365.25), grin.get_inflation_rate() , ':', color='black', label='Grin')
+
+# Adding labels, grid, legend, etc
+plt.xlabel('Time since launch (years)')
+plt.ylabel('Annual inflation rate (%)')
 plt.grid()
 plt.legend()
 

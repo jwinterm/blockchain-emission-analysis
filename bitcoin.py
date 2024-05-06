@@ -2,15 +2,9 @@ import blockchain
 import numpy as np
 
 class Bitcoin(blockchain.Blockchain):
-    def __init__(self, number_of_blocks=7e6, block_skip=10):
-        super().__init__(number_of_blocks, block_skip)
-        # First generate fully calculated date and reward data
-        self.blocks = np.arange(0, self.number_of_blocks, self.block_skip)
-        self.launch_time = 1231006505
-        self.time = self.blocks*600 + self.launch_time
-        self.date = np.array(self.time, dtype='datetime64[s]')
-        self.reward = np.zeros(len(self.blocks))
-        self.cum_reward = np.zeros(len(self.blocks))
+    def __init__(self, number_of_blocks=7e6, block_skip=100, block_time=600, launch_time=1231006505):
+        super().__init__(number_of_blocks, block_skip, block_time, launch_time)
+        # Calculate Bitcoin emission
         for i in range(len(self.blocks)):
             self.reward[i] = ((np.uint(50e8)//2**((i*self.block_skip)//210000))*1e-8) * self.block_skip
             self.cum_reward[i] = self.cum_reward[i-1] + self.reward[i] if i > 0 else self.reward[i]
