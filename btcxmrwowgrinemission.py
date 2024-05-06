@@ -9,7 +9,7 @@ import wownero
 import grin
 
 
-# Instance classes with default blocks and block skip etc
+# Instance classes 
 btc = bitcoin.Bitcoin(number_of_blocks=6.4e6, block_skip=1000, block_time=600, launch_time=1231006505)
 xmr = monero.Monero(number_of_blocks=2e7, block_skip=1000, block_time=120, launch_time=1397793600)
 wow = wownero.Wownero(number_of_blocks=1e7, block_skip=1000, block_time=300, launch_time=1521598527)
@@ -25,12 +25,13 @@ plt.plot(grin.time/(365.25*86400), grin.cum_reward/(100*365.25*86400), ':', colo
 # Adding labels, grid, legend, etc
 plt.xlabel('Time since launch (years)')
 plt.ylabel('Total supply (coins)')
+plt.title('Normalized total supply (18.1M for XMR, 100 years for Grin)')
 plt.grid()
 plt.legend()
 
 # Displaying the plot
 plt.show()
-
+plt.close()
 
 # Plotting the inflation data
 print("Getting BTC inflation rate and plotting")
@@ -45,6 +46,7 @@ plt.semilogy(grin.time/(86400*365.25), grin.get_inflation_rate() , ':', color='b
 # Adding labels, grid, legend, etc
 plt.xlabel('Time since launch (years)')
 plt.ylabel('Annual inflation rate (%)')
+plt.title('Next year supply divided by current supply')
 plt.grid()
 plt.legend()
 
